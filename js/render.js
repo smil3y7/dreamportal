@@ -1,5 +1,4 @@
 import { data, currentLayer, filterTip } from './data.js';
-import { SMERI, TIP_BARVE } from './utils.js';
 
 const map = document.getElementById("map");
 const popup = document.getElementById("popup");
@@ -7,20 +6,27 @@ const popup = document.getElementById("popup");
 export function render() {
   map.innerHTML = `<div id="popup" class="popup"></div>`;
 
-  // Tranziti
+  // === TRANZITI ===
   data.tranziti.forEach(t => {
     const from = data.lokacije[t.od];
     const to = data.lokacije[t.do];
-    if (!from || !to || from.layer !== currentLayer || filterTip && from.tip !== filterTip) return;
+    if (!from || !to || from.layer !== currentLayer || to.layer !== currentLayer) return;
+    if (filterTip && ![from.tip, to.tip].includes(filterTip)) return;
 
-    const line = document.createElement("div");
-    line.style = `position:absolute;height:3px;background:#6cf;opacity:0.6;left:${400+from.x}px;top:${300+from.y}px;width:${Math.hypot(to.x-from.x, to.y-from.y)}px;transform:rotate(${Math.atan2(to.y-from.y, to.x-from.x)*180/Math.PI}deg);transform-origin:0 0;`;
+    const dx = to.x - from.x, dy = to.y - from.y;
+    const dist = Math.hypot(dx, dy);
+    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+
+    const line = Object.assign(document.createElement("div"), {
+      style: `position:absolute;height:3px;background:#6cf;opacity:0.6;left:${400+from.x}px;top:${300+from.y}px;width:${dist}px;transform:rotate(${angle}deg);transform-origin:0 0;`
+    });
     map.appendChild(line);
   });
 
-  // Mehurčki
+  // === MEHURČKI ===
   Object.entries(data.lokacije).forEach(([ime, loc]) => {
     if (loc.layer !== currentLayer || (filterTip && loc.tip !== filterTip)) return;
+
     const size = 40 + loc.size * 12;
     const b = document.createElement("div");
     b.className = "bubble";
@@ -28,21 +34,45 @@ export function render() {
     b.innerHTML = loc.icon;
     b.title = `${ime} [${loc.tip}]`;
 
-    // Drag & drop
+    // DRAG & DROP – POPRAVLJENO
     let dragging = false;
-    b.onmousedown = e => { dragging = true; e.stopPropagation(); };
-    document.onmousemove = e => {
-      if (dragging) { loc.x = e.clientX - 400; loc.y = e.clientY - 300; render(); }
-    };
-    document.onmouseup = () => { dragging = false; window.data.shrani(); };
+    let startX, startY;
 
-    // Popup
+    b.onmousedown = e => {
+      if (e.button !== 0) return; // samo levi klik
+      dragging = true;
+      startX = e.clientX - loc.x;
+      startY = e.clientY - loc.y;
+      e.preventDefault();
+    };
+
+    const onMouseMove = e => {
+      if (!dragging) return;
+      loc.x = e.clientX - startX;
+      loc.y = e.clientY - startY;
+      render();
+    };
+
+    const onMouseUp = () => {
+      if (dragging) {
+        dragging = false;
+        window.data.shrani();
+      }
+      document.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseup", onMouseUp);
+    };
+
     b.onclick = e => {
       e.stopPropagation();
-      popup.innerHTML = `<b>${loc.icon} ${ime}</b><small>Tip: ${loc.tip}</small><hr>${loc.desc.map(d=>`<details><summary>Sanja</summary>${d}</details>`).join('')}`;
+      popup.innerHTML = `<b>${loc.icon} ${ime}</b><small>Tip: ${loc.tip}</small><hr>${loc.desc.map(d => `<details><summary>Dream</summary>${d}</details>`).join('')}`;
       popup.style.left = (e.pageX + 20) + "px";
       popup.style.top = (e.pageY + 20) + "px";
       popup.style.display = "block";
+
+      // Prepreči drag ob kliku
+      if (dragging) return;
+      document.addEventListener("mousemove", onMouseMove);
+      document.addEventListener("mouseup", onMouseUp);
     };
 
     map.appendChild(b);
