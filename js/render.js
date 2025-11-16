@@ -6,14 +6,24 @@ export function initZoomPan() {
   const map = document.getElementById("map");
   map.addEventListener("wheel", e => {
     e.preventDefault();
-    scale = Math.max(0.3, Math.min(scale * (e.deltaY > 0 ? 0.9 : 1.1), 5));
-    updateZoom(); render();
+    const delta = e.deltaY > 0 ? 0.9 : 1.1;
+    scale = Math.max(0.3, Math.min(scale * delta, 5));
+    updateZoom();
+    render();
   });
 
   const hammer = new Hammer(map);
   hammer.get('pinch').set({ enable: true });
-  hammer.on('pinch', e => { scale = Math.max(0.3, Math.min(scale * e.scale, 5)); updateZoom(); render(); });
-  hammer.on('panmove', e => { panX += e.deltaX; panY += e.deltaY; render(); });
+  hammer.on('pinch', e => {
+    scale = Math.max(0.3, Math.min(scale * e.scale, 5));
+    updateZoom();
+    render();
+  });
+  hammer.on('panmove', e => {
+    panX += e.deltaX;
+    panY += e.deltaY;
+    render();
+  });
 }
 
 function updateZoom() {
@@ -22,13 +32,14 @@ function updateZoom() {
 
 export function resetView() {
   scale = 1; panX = 0; panY = 0;
-  updateZoom(); render();
+  updateZoom();
+  render();
 }
 
 export async function render() {
   const lokacije = await getAllLokacije();
   const container = document.getElementById("map");
-  container.innerHTML = `<div id="canvas" style="position:relative;transform:translate(${panX}px,${panY}px) scale(${scale});transform-origin:center center;"></div><div id="popup" class="popup"></div>`;
+  container.innerHTML = `<div id="canvas" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) translate(${panX}px,${panY}px) scale(${scale});transform-origin:center center;"></div><div id="popup" class="popup"></div>`;
   const canvas = document.getElementById("canvas");
 
   lokacije.forEach(loc => {
