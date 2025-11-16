@@ -4,7 +4,7 @@ const IKONE = { dom: "🏠", mesto: "🏙️", morje: "🌊", neznano: "❓" };
 const BARVE = { dom: "#ffcc00", mesto: "#6666ff", morje: "#1E90FF", neznano: "#888" };
 
 export async function dodajSanje(tekst) {
-  const tip = prepoznajTip(tekst);
+  const tip = prepoznajTip(tekst.toLowerCase()); // <-- toLowerCase()
   const kljuc = `${tip} (${tip})`;
 
   const obstojeca = await getLokacija(kljuc);
@@ -32,10 +32,9 @@ export async function dodajSanje(tekst) {
 }
 
 function prepoznajTip(tekst) {
-  const t = tekst.toLowerCase();
-  if (t.includes("dom") || t.includes("hiša")) return "dom";
-  if (t.includes("mesto") || t.includes("ulica")) return "mesto";
-  if (t.includes("morje") || t.includes("voda")) return "morje";
+  if (tekst.includes("dom") || tekst.includes("hiša")) return "dom";
+  if (tekst.includes("mesto") || tekst.includes("ulica")) return "mesto";
+  if (tekst.includes("morje") || tekst.includes("voda")) return "morje";
   return "neznano";
 }
 
