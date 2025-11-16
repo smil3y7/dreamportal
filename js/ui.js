@@ -1,15 +1,13 @@
-export function initUI() {
-  document.getElementById("dodaj-btn").onclick = () => {
-    const tekst = document.getElementById("nova-sanja").value;
-    if (tekst) {
-      window.data.sanje.push({ id: Date.now(), tekst, datum: new Date().toISOString().split("T")[0] });
-      document.getElementById("nova-sanja").value = "";
-      // Tu klič detector in render
-    }
-  };
-}
+const PREVODI = {
+  sl: { appName: "DreamPortal", addButton: "Dodaj sanje", exportButton: "Izvozi JSON", resetView: "Reset", inputPlaceholder: "Tukaj vnesi svoje sanje..." },
+  en: { appName: "DreamPortal", addButton: "Add Dream", exportButton: "Export JSON", resetView: "Reset", inputPlaceholder: "Enter your dream here..." }
+};
 
 export function changeLanguage(lang) {
   localStorage.setItem("dreamPortalLang", lang);
-  // Prevedi elemente z data-t
+  document.querySelectorAll("[data-t]").forEach(el => {
+    const key = el.dataset.t;
+    el.innerText = PREVODI[lang][key] || el.innerText;
+  });
+  document.getElementById("nova-sanja").placeholder = PREVODI[lang].inputPlaceholder;
 }
