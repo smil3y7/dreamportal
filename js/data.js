@@ -4,15 +4,14 @@ export let filterTip = "";
 
 export function nalozi() {
   const saved = localStorage.getItem("dreamPortalData_v3");
-  if (saved) data = JSON.parse(saved);
-  else init();
-}
-
-function init() {
-  data.lokacije["dom"] = { 
-    x: 0, y: 0, layer: "zgornji", icon: "🏠", size: 20, tip: "dom", 
-    desc: ["Izhodišče"], barva: "var(--dom)"
-  };
+  if (saved) {
+    try {
+      data = JSON.parse(saved);
+    } catch (e) {
+      console.error("Napaka pri branju localStorage", e);
+    }
+  }
+  // init() se kliče v main.js
 }
 
 export function shrani() {
@@ -23,6 +22,6 @@ export function izvozi() {
   const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-  a.href = url; a.download = `sanjski_svet_${new Date().toISOString().split('T')[0]}.json`;
+  a.href = url; a.download = `dreamportal_${new Date().toISOString().split('T')[0]}.json`;
   a.click();
 }
