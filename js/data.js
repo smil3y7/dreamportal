@@ -12,26 +12,22 @@ export function dodajSanje(tekst) {
   const sanja = { id: Date.now(), tekst, datum: new Date().toISOString().split("T")[0] };
   window.data.sanje.push(sanja);
 
-  // Prepoznaj lokacijo (poenostavljeno)
   const tip = prepoznajTip(tekst);
-  const ime = tip === "dom" ? "dom" : tip;
-  const kljuc = `${ime} (${tip})`;
+  const kljuc = `${tip} (${tip})`;
 
   if (window.data.lokacije[kljuc]) {
-    // OBSTOJEČA – dopolni
     window.data.lokacije[kljuc].opis.push(sanja);
     window.data.lokacije[kljuc].size += 3;
   } else {
-    // NOVA – ustvari
     const smer = tip === "dom" ? { x: 0, y: 0 } : SMERI.neznano;
     window.data.lokacije[kljuc] = {
-      x: smer.x, y: smer.y,
+      x: smer.x(), y: smer.y(),
       layer: "zgornji",
       icon: getIcon(tip),
       size: 20,
       tip,
       povzetek: tekst.substring(0, 50) + "...",
-      opis: [sanj],
+      opis: [sanja],
       barva: `var(--${tip})`,
       arhetip: ["dom", "mesto", "morje"].includes(tip)
     };
