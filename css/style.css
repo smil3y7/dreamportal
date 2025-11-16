@@ -1,26 +1,19 @@
-:root {
-  --dom: #ffcc00; --mesto: #6666ff; --gore: #8B4513;
-  --morje: #1E90FF; --spodnji: #4B0082; --abstraktna: #00CED1;
-  --accent: #6cf; --bg: #0a0a1a;
-}
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: var(--bg); color: white; font-family: system-ui; overflow: hidden; height: 100vh; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #0a0a1a; color: white; font-family: system-ui; height: 100vh; overflow: hidden; }
 
 #topbar {
   position: fixed; top: 0; left: 0; right: 0; height: 56px;
-  background: #111; border-bottom: 2px solid var(--accent);
+  background: #111; border-bottom: 2px solid #6cf;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 0 16px; z-index: 1000; font-size: 14px;
+  padding: 0 16px; z-index: 1000;
 }
-#topbar h2 { margin: 0; font-size: 18px; }
-#topbar select, #topbar button { background: #222; color: white; border: 1px solid var(--accent); border-radius: 6px; padding: 6px; }
+#topbar h2 { font-size: 18px; }
+#topbar select, #topbar button { background: #222; color: white; border: 1px solid #6cf; border-radius: 6px; padding: 6px; }
 
-#app { display: grid; grid-template-columns: 420px 1fr; height: 100vh; padding-top: 56px; }
-#sidebar { background: #111; padding: 16px; overflow-y: auto; transition: width 0.3s; }
-#sidebar.collapsed { width: 60px !important; padding: 16px 8px; }
-#nova-sanja { width: 100%; height: 100px; background: #222; color: white; border: 1px solid var(--accent); border-radius: 8px; padding: 12px; font-size: 16px; }
-button { cursor: pointer; }
+#app { display: grid; grid-template-columns: 380px 1fr; height: 100vh; padding-top: 56px; }
+#sidebar { background: #111; padding: 16px; overflow-y: auto; }
+#nova-sanja { width: 100%; height: 100px; background: #222; color: white; border: 1px solid #6cf; border-radius: 8px; padding: 12px; }
+button { cursor: pointer; margin: 4px 0; }
 
 #map-container { position: relative; overflow: hidden; }
 #map { width: 100%; height: 100%; background: #0a0a2e; touch-action: none; }
@@ -28,36 +21,33 @@ button { cursor: pointer; }
 #fab {
   position: absolute; bottom: 24px; right: 24px;
   width: 56px; height: 56px; border-radius: 50%;
-  background: var(--accent); color: black; font-size: 24px;
+  background: #6cf; color: black; font-size: 24px;
   border: none; box-shadow: 0 4px 12px rgba(108, 255, 255, 0.4);
   z-index: 100;
 }
-#fab:active { transform: scale(0.95); }
 
 .popup { 
-  display: none; position: absolute; background: #111; border: 1px solid var(--accent); 
+  display: none; position: absolute; background: #111; border: 1px solid #6cf; 
   padding: 16px; border-radius: 8px; max-width: 300px; z-index: 1000; 
-  font-size: 14px; line-height: 1.4;
+  font-size: 14px;
 }
 
-.mehurcek {
+.sfera {
   position: absolute;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: 18px;
   color: white;
-  text-shadow: 0 0 4px black;
   cursor: pointer;
-  transition: transform 0.2s;
   border: 2px solid rgba(255,255,255,0.3);
+  transition: transform 0.2s;
 }
-.mehurcek:hover { transform: scale(1.2); }
-.mehurcek.arhetip { border: 3px solid gold; }
+.sfera:hover { transform: scale(1.2); }
+.sfera.arhetip { border: 3px solid gold; }
 
 @media (max-width: 768px) {
   #app { grid-template-columns: 1fr; }
-  #sidebar { position: absolute; top: 56px; left: 0; height: calc(100vh - 56px); z-index: 999; width: 100%; }
-  #sidebar.collapsed { width: 60px; }
+  #sidebar { position: absolute; top: 56px; left: 0; width: 100%; z-index: 999; }
 }
