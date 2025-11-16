@@ -6,12 +6,14 @@ import { changeLanguage } from './ui.js';
 async function init() {
   await initDB();
   render();
+  initZoomPan();
 
-  document.getElementById("dodaj-btn").onclick = () => {
+  document.getElementById("dodaj-btn").onclick = async () => {
     const tekst = document.getElementById("nova-sanja").value.trim();
     if (tekst) {
-      dodajSanje(tekst);
+      await dodajSanje(tekst);
       document.getElementById("nova-sanja").value = "";
+      render(); // <-- TUKAJ!
     }
   };
 
