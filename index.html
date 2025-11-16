@@ -2,15 +2,15 @@
 <html lang="sl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DreamPortal</title>
   <link rel="stylesheet" href="css/style.css" />
   <link rel="manifest" href="manifest.json" />
-  <link rel="icon" href="icons/192.png" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
 </head>
 <body>
 
-  <!-- TOP BAR -->
   <div id="topbar">
     <h2 data-t="appName">DreamPortal</h2>
     <select id="lang-select">
@@ -23,16 +23,14 @@
   </div>
 
   <div id="app">
-    <!-- SIDEBAR -->
     <div id="sidebar">
       <textarea id="nova-sanja" placeholder="Tukaj vnesi svoje sanje..." data-t-placeholder="inputPlaceholder"></textarea>
-      <button id="dodaj-btn" data-t="addButton">Dodaj sanje</button>
-      <button id="izvozi-btn" data-t="exportButton">Izvozi JSON</button>
+      <button id="dodaj-btn" data-t="addButton">Dodaj</button>
+      <button id="test-1000">Test: 1000 sanj</button>
       <hr>
       <div id="seznam-sanj"></div>
     </div>
 
-    <!-- KARTA -->
     <div id="map-container">
       <div id="map">
         <div id="popup" class="popup"></div>
@@ -41,7 +39,6 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
-  <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/app.js"></script>
 </body>
 </html>
