@@ -1,23 +1,43 @@
 :root {
-  --bg: #0a0a1a; --accent: #6cf; --text: #fff;
-  --dom: #ff0; --mesto: #0f0; --gore: #888;
-  --morje: #00f; --spodnji: #f0f; --abstraktna: #f9f;
+  --dom: #ffcc00; --mesto: #6666ff; --gore: #8B4513;
+  --morje: #1E90FF; --spodnji: #4B0082; --abstraktna: #00CED1;
+  --accent: #6cf; --bg: #0a0a1a;
 }
-* { box-sizing: border-box; }
-body { margin:0; background:var(--bg); color:var(--text); font-family:Arial; overflow:hidden; }
-#app { display:grid; grid-template-columns: 420px 1fr; height:100vh; }
-#sidebar { background:#111; padding:20px; overflow-y:auto; border-right:2px solid var(--accent); }
-#map { position:relative; background:#0a0a2e; overflow:hidden; }
-textarea { width:100%; height:140px; background:#222; color:#fff; border:1px solid var(--accent); padding:12px; border-radius:8px; margin-bottom:10px; resize:vertical; }
-button { background:var(--accent); color:#000; border:none; padding:12px 20px; margin:5px 0; cursor:pointer; font-weight:bold; border-radius:8px; }
-button:hover { background:#8df; }
-.sanja { background:#222; padding:12px; margin:10px 0; border-left:5px solid var(--accent); border-radius:6px; font-size:13px; }
-.bubble { position:absolute; border-radius:50%; border:3px solid; color:white; text-align:center; cursor:pointer; transition:all 0.3s; box-shadow:0 0 25px var(--accent); display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:18px; }
-.bubble:hover { transform:scale(1.4); z-index:1000; }
-.popup { position:absolute; background:#111; color:#fff; padding:18px; border-radius:12px; max-width:400px; box-shadow:0 0 35px var(--accent); z-index:10000; border:1px solid var(--accent); font-size:14px; line-height:1.7; display:none; }
-.layer-btn { position:absolute; top:15px; left:15px; background:#222; color:#fff; padding:10px 16px; border:2px solid var(--accent); margin:5px; cursor:pointer; border-radius:8px; font-size:13px; }
-.layer-btn.active { background:var(--accent); color:#000; }
-#save-btn, #github-btn { position:absolute; top:15px; right:15px; background:#2c2; padding:10px 16px; margin-left:8px; }
-#github-btn { right:130px; background:#333; }
-.tip-filter { position:absolute; top:70px; left:15px; background:#222; padding:8px; border:1px solid var(--accent); border-radius:8px; }
-.tip-filter select { background:#111; color:#fff; border:none; padding:5px; border-radius:5px; }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: white; font-family: system-ui; overflow: hidden; height: 100vh; }
+
+#topbar {
+  position: fixed; top: 0; left: 0; right: 0; height: 56px;
+  background: #111; border-bottom: 2px solid var(--accent);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 16px; z-index: 1000; font-size: 14px;
+}
+#topbar h2 { margin: 0; font-size: 18px; }
+#topbar select, #topbar button { background: #222; color: white; border: 1px solid var(--accent); border-radius: 6px; padding: 6px; }
+
+#app { display: grid; grid-template-columns: 420px 1fr; height: 100vh; padding-top: 56px; }
+#sidebar { background: #111; padding: 16px; overflow-y: auto; transition: width 0.3s; }
+#sidebar.collapsed { width: 60px !important; padding: 16px 8px; }
+#nova-sanja { width: 100%; height: 100px; background: #222; color: white; border: 1px solid var(--accent); border-radius: 8px; padding: 12px; font-size: 16px; }
+button { cursor: pointer; }
+
+#map-container { position: relative; overflow: hidden; }
+#map { width: 100%; height: 100%; background: #0a0a2e; touch-action: none; }
+
+#fab {
+  position: absolute; bottom: 24px; right: 24px;
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--accent); color: black; font-size: 24px;
+  border: none; box-shadow: 0 4px 12px rgba(108, 255, 255, 0.4);
+  z-index: 100;
+}
+#fab:active { transform: scale(0.95); }
+
+.popup { display: none; position: absolute; background: #111; border: 1px solid var(--accent); padding: 16px; border-radius: 8px; max-width: 300px; z-index: 1000; }
+
+@media (max-width: 768px) {
+  #app { grid-template-columns: 1fr; }
+  #sidebar { position: absolute; top: 56px; left: 0; height: calc(100vh - 56px); z-index: 999; width: 100%; }
+  #sidebar.collapsed { width: 60px; }
+}
