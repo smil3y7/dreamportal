@@ -1,13 +1,13 @@
 const PREVODI = {
-  sl: { appName: "DreamPortal", addButton: "Dodaj sanje", exportButton: "Izvozi JSON", resetView: "Reset", inputPlaceholder: "Tukaj vnesi svoje sanje..." },
-  en: { appName: "DreamPortal", addButton: "Add Dream", exportButton: "Export JSON", resetView: "Reset", inputPlaceholder: "Enter your dream here..." }
+  sl: { appName: "DreamPortal", addButton: "Dodaj", resetView: "Resetiraj", inputPlaceholder: "Tukaj vnesi svoje sanje..." },
+  en: { appName: "DreamPortal", addButton: "Add", resetView: "Reset", inputPlaceholder: "Enter your dream..." }
 };
 
 export function changeLanguage(lang) {
-  localStorage.setItem("dreamPortalLang", lang);
+  localStorage.setItem("lang", lang);
   document.querySelectorAll("[data-t]").forEach(el => {
     const key = el.dataset.t;
-    el.innerText = PREVODI[lang][key] || el.innerText;
+    if (PREVODI[lang][key]) el.innerText = PREVODI[lang][key];
   });
   document.getElementById("nova-sanja").placeholder = PREVODI[lang].inputPlaceholder;
 }
