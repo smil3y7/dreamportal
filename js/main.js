@@ -1,6 +1,6 @@
 import { initDB, get, set } from './db.js';
 import { render, initZoomAndPan, resetView } from './render.js';
-import { initUI, changeLanguage } from './ui.js';
+import { changeLanguage } from './ui.js';
 import { dodajSanje } from './data.js';
 
 window.data = { lokacije: {}, sanje: [], tranziti: [] };
@@ -19,21 +19,19 @@ async function init() {
     await set("main", window.data);
   }
 
-  render();
+  render(); // Karta se odpre na 100%
   initZoomAndPan();
-  initUI();
 
   const lang = localStorage.getItem("dreamPortalLang") || "sl";
   document.getElementById("lang-select").value = lang;
   changeLanguage(lang);
 
+  // GUMBI
   document.getElementById("reset-view").onclick = resetView;
   document.getElementById("fab").onclick = () => document.getElementById("nova-sanja").focus();
   document.getElementById("toggle-sidebar").onclick = () => {
     document.getElementById("sidebar").classList.toggle("collapsed");
   };
-
-  // DODAJ SANJE
   document.getElementById("dodaj-btn").onclick = () => {
     const tekst = document.getElementById("nova-sanja").value.trim();
     if (tekst) {
@@ -41,6 +39,9 @@ async function init() {
       document.getElementById("nova-sanja").value = "";
       render();
     }
+  };
+  document.getElementById("lang-select").onchange = (e) => {
+    changeLanguage(e.target.value);
   };
 }
 
