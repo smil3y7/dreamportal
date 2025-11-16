@@ -1,50 +1,45 @@
-import { set } from './db.js';
+import { dodajLokacijo, getLokacija, dodajSanjeSanje } from './db.js';
 
-const SMERI = {
-  sever: { x: 0, y: 400 },
-  jug: { x: 0, y: -400 },
-  vzhod: { x: 400, y: 0 },
-  zahod: { x: -400, y: 0 },
-  neznano: { x: () => (Math.random() - 0.5) * 800, y: () => (Math.random() - 0.5) * 800 }
-};
+const IKONE = { dom: "🏠", mesto: "🏙️", morje: "🌊", neznano: "❓" };
+const BARVE = { dom: "#ffcc00", mesto: "#6666ff", morje: "#1E90FF", neznano: "#888" };
 
-export function dodajSanje(tekst) {
-  const sanja = { id: Date.now(), tekst, datum: new Date().toISOString().split("T")[0] };
-  window.data.sanje.push(sanja);
-
+export async function dodajSanje(tekst) {
   const tip = prepoznajTip(tekst);
   const kljuc = `${tip} (${tip})`;
 
-  if (window.data.lokacije[kljuc]) {
-    window.data.lokacije[kljuc].opis.push(sanja);
-    window.data.lokacije[kljuc].size += 3;
+  const obstojeca = await getLokacija(kljuc);
+  const sanja = { tekst, datum: new Date().toLocaleDateString(), tip };
+
+  if (obstojeca) {
+    obstojeca.opis.push(sanja);
+    obstojeca.size += 3;
+    obstojeca.povzetek = generirajPovzetek(obstojeca.opis);
+    await dodajLokacijo(obstojeca);
   } else {
-    const smer = tip === "dom" ? { x: 0, y: 0 } : SMERI.neznano;
-    window.data.lokacije[kljuc] = {
-      x: smer.x(), y: smer.y(),
-      layer: "zgornji",
-      icon: getIcon(tip),
-      size: 20,
-      tip,
-      povzetek: tekst.substring(0, 50) + "...",
+    const x = tip === "dom" ? 0 : (Math.random() - 0.5) * 1000;
+    const y = tip === "dom" ? 0 : (Math.random() - 0.5) * 1000;
+    const nova = {
+      kljuc, x, y, size: 25, tip,
+      icon: IKONE[tip], barva: BARVE[tip],
+      povzetek: tekst.substring(0, 40) + "...",
       opis: [sanja],
-      barva: `var(--${tip})`,
       arhetip: ["dom", "mesto", "morje"].includes(tip)
     };
+    await dodajLokacijo(nova);
   }
 
-  set("main", window.data);
+  await dodajSanjeSanje(sanja);
 }
 
 function prepoznajTip(tekst) {
-  const lower = tekst.toLowerCase();
-  if (lower.includes("dom") || lower.includes("hiša")) return "dom";
-  if (lower.includes("mesto") || lower.includes("ulica")) return "mesto";
-  if (lower.includes("morje") || lower.includes("voda")) return "morje";
+  const t = tekst.toLowerCase();
+  if (t.includes("dom") || t.includes("hiša")) return "dom";
+  if (t.includes("mesto") || t.includes("ulica")) return "mesto";
+  if (t.includes("morje") || t.includes("voda")) return "morje";
   return "neznano";
 }
 
-function getIcon(tip) {
-  const icons = { dom: "🏠", mesto: "🏙️", morje: "🌊", neznano: "❓" };
-  return icons[tip] || "❓";
+function generirajPovzetek(opisi) {
+  const besede = opisi.flatMap(o => o.tekst.split(" "));
+  return besede.slice(0, 15).join(" ") + "...";
 }
