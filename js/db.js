@@ -1,28 +1,32 @@
 let db;
 export async function initDB() {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open("DreamPortal", 1);
-    request.onupgradeneeded = e => {
+  return new Promise((resolve) => {
+    const req = indexedDB.open("DreamPortal", 3);
+    req.onupgradeneeded = (e) => {
       db = e.target.result;
-      db.createObjectStore("data", { keyPath: "key" });
+      db.createObjectStore("lokacije", { keyPath: "kljuc" });
+      db.createObjectStore("sanje", { keyPath: "id", autoIncrement: true });
     };
-    request.onsuccess = () => { db = request.result; resolve(); };
-    request.onerror = () => reject(request.error);
+    req.onsuccess = () => { db = req.result; resolve(); };
   });
 }
-export async function get(key) {
-  await initDB();
-  return new Promise(resolve => {
-    const tx = db.transaction("data", "readonly");
-    const req = tx.objectStore("data").get(key);
-    req.onsuccess = () => resolve(req.result?.value);
-  });
+
+export async function dodajLokacijo(lok) {
+  const tx = db.transaction("lokacije", "readwrite");
+  await tx.objectStore("lokacije").put(lok);
 }
-export async function set(key, value) {
-  await initDB();
-  return new Promise(resolve => {
-    const tx = db.transaction("data", "readwrite");
-    tx.objectStore("data").put({ key, value });
-    tx.oncomplete = resolve;
-  });
+
+export async function getLokacija(kljuc) {
+  const tx = db.transaction("lokacije", "readonly");
+  return await tx.objectStore("lokacije").get(kljuc);
+}
+
+export async function getAllLokacije() {
+  const tx = db.transaction("lokacije", "readonly");
+  return await tx.objectStore("lokacije").getAll();
+}
+
+export async function dodajSanjeSanje(sanja) {
+  const tx = db.transaction("sanje", "readwrite");
+  return await tx.objectStore("sanje").add(sanja);
 }
