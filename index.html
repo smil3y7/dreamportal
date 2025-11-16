@@ -2,48 +2,46 @@
 <html lang="sl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>DreamPortal v3</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>DreamPortal</title>
   <link rel="stylesheet" href="css/style.css" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/192.png" />
 </head>
 <body>
+
+  <!-- TOP BAR -->
+  <div id="topbar">
+    <h2 data-t="appName">DreamPortal</h2>
+    <select id="lang-select">
+      <option value="sl">SL</option>
+      <option value="en">EN</option>
+    </select>
+    <span id="zoom-level">100%</span>
+    <button id="reset-view" data-t="resetView">Reset</button>
+    <button id="toggle-sidebar">☰</button>
+  </div>
+
   <div id="app">
+    <!-- SIDEBAR -->
     <div id="sidebar">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h2 data-t="title">DreamPortal</h2>
-        <select id="lang-select" onchange="changeLanguage(this.value)">
-          <option value="sl">SL</option>
-          <option value="en" selected>EN</option>
-        </select>
-      </div>
-      <p><small data-t="subtitle">Vnesi sanje → avtomatsko se posodobi</small></p>
-      <textarea id="nova-sanja" placeholder="Tukaj vnesi svoje sanje..."></textarea>
-      <button id="dodaj-btn" data-t="add">Dodaj sanje</button>
-      <button id="izvozi-btn" data-t="export">Izvozi JSON</button>
+      <textarea id="nova-sanja" placeholder="Tukaj vnesi svoje sanje..." data-t-placeholder="inputPlaceholder"></textarea>
+      <button id="dodaj-btn" data-t="addButton">Dodaj sanje</button>
+      <button id="izvozi-btn" data-t="exportButton">Izvozi JSON</button>
       <hr>
       <div id="seznam-sanj"></div>
     </div>
 
-    <div id="map">
-      <button class="layer-btn active" data-layer="zgornji" data-t="upper">Zgornji svet</button>
-      <button class="layer-btn" data-layer="spodnji" data-t="lower">Spodnji svet</button>
-      <button id="save-btn" data-t="save">Shrani</button>
-      <button id="github-btn" data-t="github">GitHub</button>
-      <div class="tip-filter">
-        <select id="filter-tip" data-t="filter">
-          <option value="">Vse lokacije</option>
-          <option value="dom">Dom</option>
-          <option value="mesto">Mesto</option>
-          <option value="gore">Gore</option>
-          <option value="morje">Morje</option>
-          <option value="spodnji">Spodnji svet</option>
-          <option value="abstraktna">Abstraktna</option>
-        </select>
+    <!-- KARTA -->
+    <div id="map-container">
+      <div id="map">
+        <div id="popup" class="popup"></div>
       </div>
-      <div id="popup" class="popup"></div>
+      <button id="fab">+</button>
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
   <script type="module" src="js/main.js"></script>
 </body>
 </html>
