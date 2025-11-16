@@ -1,0 +1,23 @@
+:root {
+  --bg: #0a0a1a; --accent: #6cf; --text: #fff;
+  --dom: #ff0; --mesto: #0f0; --gore: #888;
+  --morje: #00f; --spodnji: #f0f; --abstraktna: #f9f;
+}
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--text); font-family:Arial; overflow:hidden; }
+#app { display:grid; grid-template-columns: 420px 1fr; height:100vh; }
+#sidebar { background:#111; padding:20px; overflow-y:auto; border-right:2px solid var(--accent); }
+#map { position:relative; background:#0a0a2e; overflow:hidden; }
+textarea { width:100%; height:140px; background:#222; color:#fff; border:1px solid var(--accent); padding:12px; border-radius:8px; margin-bottom:10px; resize:vertical; }
+button { background:var(--accent); color:#000; border:none; padding:12px 20px; margin:5px 0; cursor:pointer; font-weight:bold; border-radius:8px; }
+button:hover { background:#8df; }
+.sanja { background:#222; padding:12px; margin:10px 0; border-left:5px solid var(--accent); border-radius:6px; font-size:13px; }
+.bubble { position:absolute; border-radius:50%; border:3px solid; color:white; text-align:center; cursor:pointer; transition:all 0.3s; box-shadow:0 0 25px var(--accent); display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:18px; }
+.bubble:hover { transform:scale(1.4); z-index:1000; }
+.popup { position:absolute; background:#111; color:#fff; padding:18px; border-radius:12px; max-width:400px; box-shadow:0 0 35px var(--accent); z-index:10000; border:1px solid var(--accent); font-size:14px; line-height:1.7; display:none; }
+.layer-btn { position:absolute; top:15px; left:15px; background:#222; color:#fff; padding:10px 16px; border:2px solid var(--accent); margin:5px; cursor:pointer; border-radius:8px; font-size:13px; }
+.layer-btn.active { background:var(--accent); color:#000; }
+#save-btn, #github-btn { position:absolute; top:15px; right:15px; background:#2c2; padding:10px 16px; margin-left:8px; }
+#github-btn { right:130px; background:#333; }
+.tip-filter { position:absolute; top:70px; left:15px; background:#222; padding:8px; border:1px solid var(--accent); border-radius:8px; }
+.tip-filter select { background:#111; color:#fff; border:none; padding:5px; border-radius:5px; }
