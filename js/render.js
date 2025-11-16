@@ -1,80 +1,68 @@
-import { data, currentLayer, filterTip } from './data.js';
+import { get } from './db.js';
 
-const map = document.getElementById("map");
-const popup = document.getElementById("popup");
+let scale = 1, panX = 0, panY = 0;
+let isPanning = false, startX, startY;
 
-export function render() {
-  map.innerHTML = `<div id="popup" class="popup"></div>`;
+export function initZoomAndPan() {
+  const map = document.getElementById("map");
+  let startScale;
 
-  // === TRANZITI ===
-  data.tranziti.forEach(t => {
-    const from = data.lokacije[t.od];
-    const to = data.lokacije[t.do];
-    if (!from || !to || from.layer !== currentLayer || to.layer !== currentLayer) return;
-    if (filterTip && ![from.tip, to.tip].includes(filterTip)) return;
-
-    const dx = to.x - from.x, dy = to.y - from.y;
-    const dist = Math.hypot(dx, dy);
-    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
-
-    const line = Object.assign(document.createElement("div"), {
-      style: `position:absolute;height:3px;background:#6cf;opacity:0.6;left:${400+from.x}px;top:${300+from.y}px;width:${dist}px;transform:rotate(${angle}deg);transform-origin:0 0;`
-    });
-    map.appendChild(line);
+  map.addEventListener("wheel", e => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? 0.9 : 1.1;
+    scale = Math.max(0.3, Math.min(scale * delta, 5));
+    updateZoom(); render();
   });
 
-  // === MEHURČKI ===
-  Object.entries(data.lokacije).forEach(([ime, loc]) => {
-    if (loc.layer !== currentLayer || (filterTip && loc.tip !== filterTip)) return;
+  const hammer = new Hammer(map);
+  hammer.get('pinch').set({ enable: true });
+  hammer.on('pinchstart', e => startScale = scale);
+  hammer.on('pinch', e => { scale = Math.max(0.3, Math.min(startScale * e.scale, 5)); updateZoom(); render(); });
+  hammer.on('panstart', e => { isPanning = true; startX = e.center.x - panX; startY = e.center.y - panY; });
+  hammer.on('panmove', e => { if (isPanning) { panX = e.center.x - startX; panY = e.center.y - startY; render(); }});
+  hammer.on('panend', () => isPanning = false);
 
-    const size = 40 + loc.size * 12;
-    const b = document.createElement("div");
-    b.className = "bubble";
-    b.style = `border-color:${loc.barva};width:${size}px;height:${size}px;left:${400+loc.x-size/2}px;top:${300+loc.y-size/2}px;`;
-    b.innerHTML = loc.icon;
-    b.title = `${ime} [${loc.tip}]`;
+  map.ondblclick = e => { if (e.target === map) { scale *= 1.5; updateZoom(); render(); }};
+}
 
-    // DRAG & DROP – POPRAVLJENO
-    let dragging = false;
-    let startX, startY;
+function updateZoom() {
+  document.getElementById("zoom-level").innerText = `${Math.round(scale * 100)}%`;
+}
 
-    b.onmousedown = e => {
-      if (e.button !== 0) return; // samo levi klik
-      dragging = true;
-      startX = e.clientX - loc.x;
-      startY = e.clientY - loc.y;
-      e.preventDefault();
-    };
+export function resetView() {
+  scale = 1; panX = 0; panY = 0;
+  updateZoom(); render();
+}
 
-    const onMouseMove = e => {
-      if (!dragging) return;
-      loc.x = e.clientX - startX;
-      loc.y = e.clientY - startY;
-      render();
-    };
+export async function render() {
+  const data = await get("main") || window.data;
+  const container = document.getElementById("map");
+  container.innerHTML = `<div id="canvas" style="position:relative;transform:translate(${panX}px,${panY}px) scale(${scale});transform-origin:top left;"></div><div id="popup" class="popup"></div>`;
+  const canvas = document.getElementById("canvas");
 
-    const onMouseUp = () => {
-      if (dragging) {
-        dragging = false;
-        window.data.shrani();
-      }
-      document.removeEventListener("mousemove", onMouseMove);
-      document.removeEventListener("mouseup", onMouseUp);
-    };
+  // Dodaj mehurčke (primer)
+  for (const [id, loc] of Object.entries(data.lokacije)) {
+    const div = document.createElement("div");
+    div.style.position = "absolute";
+    div.style.left = `${loc.x - loc.size/2}px`;
+    div.style.top = `${loc.y - loc.size/2}px`;
+    div.style.width = div.style.height = `${loc.size}px`;
+    div.style.background = loc.barva;
+    div.style.borderRadius = "50%";
+    div.style.display = "flex";
+    div.style.alignItems = "center";
+    div.style.justifyContent = "center";
+    div.style.fontSize = `${loc.size/2}px`;
+    div.innerHTML = loc.icon;
+    div.onclick = () => showPopup(loc, div.getBoundingClientRect());
+    canvas.appendChild(div);
+  }
+}
 
-    b.onclick = e => {
-      e.stopPropagation();
-      popup.innerHTML = `<b>${loc.icon} ${ime}</b><small>Tip: ${loc.tip}</small><hr>${loc.desc.map(d => `<details><summary>Dream</summary>${d}</details>`).join('')}`;
-      popup.style.left = (e.pageX + 20) + "px";
-      popup.style.top = (e.pageY + 20) + "px";
-      popup.style.display = "block";
-
-      // Prepreči drag ob kliku
-      if (dragging) return;
-      document.addEventListener("mousemove", onMouseMove);
-      document.addEventListener("mouseup", onMouseUp);
-    };
-
-    map.appendChild(b);
-  });
+function showPopup(loc, rect) {
+  const popup = document.getElementById("popup");
+  popup.innerHTML = `<strong>${loc.icon} ${loc.tip}</strong><p>${loc.povzetek || "Brez opisa"}</p>`;
+  popup.style.display = "block";
+  popup.style.left = `${rect.left + window.scrollX}px`;
+  popup.style.top = `${rect.bottom + window.scrollY}px`;
 }
