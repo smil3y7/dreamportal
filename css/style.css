@@ -34,12 +34,10 @@ button { cursor: pointer; }
 }
 #fab:active { transform: scale(0.95); }
 
-.popup { display: none; position: absolute; background: #111; border: 1px solid var(--accent); padding: 16px; border-radius: 8px; max-width: 300px; z-index: 1000; }
-
-@media (max-width: 768px) {
-  #app { grid-template-columns: 1fr; }
-  #sidebar { position: absolute; top: 56px; left: 0; height: calc(100vh - 56px); z-index: 999; width: 100%; }
-  #sidebar.collapsed { width: 60px; }
+.popup { 
+  display: none; position: absolute; background: #111; border: 1px solid var(--accent); 
+  padding: 16px; border-radius: 8px; max-width: 300px; z-index: 1000; 
+  font-size: 14px; line-height: 1.4;
 }
 
 .mehurcek {
@@ -56,4 +54,10 @@ button { cursor: pointer; }
   border: 2px solid rgba(255,255,255,0.3);
 }
 .mehurcek:hover { transform: scale(1.2); }
-.mehurcek[arhetip] { border: 3px solid gold; }
+.mehurcek.arhetip { border: 3px solid gold; }
+
+@media (max-width: 768px) {
+  #app { grid-template-columns: 1fr; }
+  #sidebar { position: absolute; top: 56px; left: 0; height: calc(100vh - 56px); z-index: 999; width: 100%; }
+  #sidebar.collapsed { width: 60px; }
+}
