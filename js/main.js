@@ -1,40 +1,35 @@
-import { nalozi, data, shrani, izvozi } from './data.js';
-import { initUI, changeLanguage, osveziSeznam } from './ui.js';
-import { render } from './render.js';
-import * as utils from './utils.js';
-import * as detector from './detector.js';
+import { initDB, get, set } from './db.js';
+import { render, initZoomAndPan, resetView } from './render.js';
+import { initUI, changeLanguage } from './ui.js';
 
-// Globalno za druge module
-window.utils = utils;
-window.detector = detector;
-window.data = { nalozi, data, shrani, izvozi };
-window.render = render;
+window.data = { lokacije: {}, sanje: [], tranziti: [] };
 
-// Naloži podatke + inicializiraj dom
-nalozi();
-if (!data.lokacije["dom"]) {
-  // Če ni doma, ga ustvari
-  data.lokacije["dom"] = { 
-    x: 0, y: 0, layer: "zgornji", icon: "🏠", size: 20, tip: "dom", 
-    desc: ["Izhodišče"], barva: "var(--dom)"
+async function init() {
+  await initDB();
+  const saved = await get("main");
+  if (saved) window.data = saved;
+
+  if (!window.data.lokacije["dom (dom)"]) {
+    window.data.lokacije["dom (dom)"] = {
+      x: 0, y: 0, layer: "zgornji", icon: "🏠", size: 20, tip: "dom",
+      povzetek: "Izhodišče", opis: [], barva: "var(--dom)", arhetip: true
+    };
+    await set("main", window.data);
+  }
+
+  render();
+  initZoomAndPan();
+  initUI();
+
+  const lang = localStorage.getItem("dreamPortalLang") || "sl";
+  document.getElementById("lang-select").value = lang;
+  changeLanguage(lang);
+
+  document.getElementById("reset-view").onclick = resetView;
+  document.getElementById("fab").onclick = () => document.getElementById("nova-sanja").focus();
+  document.getElementById("toggle-sidebar").onclick = () => {
+    document.getElementById("sidebar").classList.toggle("collapsed");
   };
-  shrani();
 }
 
-osveziSeznam();
-render();
-initUI();
-
-// Jezik
-const savedLang = localStorage.getItem("dreamPortalLang") || "en";
-document.getElementById("lang-select").value = savedLang;
-changeLanguage(savedLang);
-
-// Demo
-setTimeout(() => {
-  const demo = savedLang === "sl" 
-    ? `Sem doma. Prileti žoga. Poberem jo → na igrišču. Grem proti jugu v mesto.`
-    : `I'm home. A ball flies in. I pick it up → on the field. I go south to the city.`;
-  document.getElementById("nova-sanja").value = demo;
-  document.getElementById("dodaj-btn").click();
-}, 800);
+init();
