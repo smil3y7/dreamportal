@@ -1,31 +1,9 @@
-import { data, currentLayer, filterTip } from './data.js';
+import { data } from './data.js';
 import { render } from './render.js';
 
 const PREVODI = {
-  sl: {
-    title: "DreamPortal",
-    subtitle: "Vnesi sanje → avtomatsko se posodobi",
-    add: "Dodaj sanje",
-    export: "Izvozi JSON",
-    save: "Shrani",
-    github: "GitHub",
-    upper: "Zgornji svet",
-    lower: "Spodnji svet",
-    all: "Vse lokacije",
-    dom: "Dom", mesto: "Mesto", gore: "Gore", morje: "Morje", spodnji: "Spodnji svet", abstraktna: "Abstraktna"
-  },
-  en: {
-    title: "DreamPortal",
-    subtitle: "Enter dream → auto-update map",
-    add: "Add Dream",
-    export: "Export JSON",
-    save: "Save",
-    github: "GitHub",
-    upper: "Upper World",
-    lower: "Lower World",
-    all: "All locations",
-    dom: "Home", mesto: "City", gore: "Mountains", morje: "Sea", spodnji: "Underworld", abstraktna: "Abstract"
-  }
+  sl: { title: "DreamPortal", subtitle: "Vnesi sanje → avtomatsko se posodobi", add: "Dodaj sanje", export: "Izvozi JSON", save: "Shrani", github: "GitHub", upper: "Zgornji svet", lower: "Spodnji svet", all: "Vse lokacije", dom: "Dom", mesto: "Mesto", gore: "Gore", morje: "Morje", spodnji: "Spodnji svet", abstraktna: "Abstraktna" },
+  en: { title: "DreamPortal", subtitle: "Enter dream → auto-update map", add: "Add Dream", export: "Export JSON", save: "Save", github: "GitHub", upper: "Upper World", lower: "Lower World", all: "All locations", dom: "Home", mesto: "City", gore: "Mountains", morje: "Sea", spodnji: "Underworld", abstraktna: "Abstract" }
 };
 
 let currentLang = "en";
@@ -34,18 +12,15 @@ export function changeLanguage(lang) {
   currentLang = lang;
   localStorage.setItem("dreamPortalLang", lang);
 
-  // Posodobi vse [data-t]
   document.querySelectorAll("[data-t]").forEach(el => {
     const key = el.getAttribute("data-t");
     if (PREVODI[lang][key]) el.innerText = PREVODI[lang][key];
   });
 
-  // Posodobi filter možnosti
   const filter = document.getElementById("filter-tip");
-  const tipMap = { dom: "dom", mesto: "mesto", gore: "gore", morje: "morje", spodnji: "spodnji", abstraktna: "abstraktna" };
+  const tipMap = ["", "dom", "mesto", "gore", "morje", "spodnji", "abstraktna"];
   Array.from(filter.options).forEach((opt, i) => {
-    if (i === 0) opt.text = PREVODI[lang].all;
-    else opt.text = PREVODI[lang][tipMap[opt.value]] || opt.text;
+    opt.text = i === 0 ? PREVODI[lang].all : PREVODI[lang][tipMap[i]];
   });
 
   osveziSeznam();
@@ -53,10 +28,7 @@ export function changeLanguage(lang) {
 }
 
 export function initUI() {
-  // Jezik iz localStorage
-  const savedLang = localStorage.getItem("dreamPortalLang") || "en";
-  document.getElementById("lang-select").value = savedLang;
-  changeLanguage(savedLang);
+  document.getElementById("lang-select").onchange = (e) => changeLanguage(e.target.value);
 
   document.getElementById("dodaj-btn").onclick = () => {
     const tekst = document.getElementById("nova-sanja").value.trim();
@@ -76,7 +48,7 @@ export function initUI() {
     const blob = new Blob([document.documentElement.outerHTML], {type: "text/html"});
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a"); a.href = url; a.download = "index.html"; a.click();
-    alert("index.html " + (currentLang === "sl" ? "pripravljen za GitHub!" : "ready for GitHub!"));
+    alert("index.html " + (currentLang === "sl" ? "pripravljen!" : "ready!"));
   };
 
   document.querySelectorAll(".layer-btn").forEach(btn => {
