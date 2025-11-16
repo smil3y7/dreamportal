@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DreamPortal v3</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="app">
+    <div id="sidebar">
+      <h2>DreamPortal</h2>
+      <p><small>Vnesi sanje → avtomatsko se posodobi</small></p>
+      <textarea id="nova-sanja" placeholder="Tukaj vnesi svoje sanje..."></textarea>
+      <button id="dodaj-btn">Dodaj sanje</button>
+      <button id="izvozi-btn">Izvozi JSON</button>
+      <hr>
+      <div id="seznam-sanj"></div>
+    </div>
+
+    <div id="map">
+      <button class="layer-btn active" data-layer="zgornji">Zgornji svet</button>
+      <button class="layer-btn" data-layer="spodnji">Spodnji svet</button>
+      <button id="save-btn">Shrani</button>
+      <button id="github-btn">GitHub</button>
+      <div class="tip-filter">
+        <select id="filter-tip">
+          <option value="">Vse lokacije</option>
+          <option value="dom">Dom</option>
+          <option value="mesto">Mesto</option>
+          <option value="gore">Gore</option>
+          <option value="morje">Morje</option>
+          <option value="spodnji">Spodnji svet</option>
+          <option value="abstraktna">Abstraktna</option>
+        </select>
+      </div>
+      <div id="popup" class="popup"></div>
+    </div>
+  </div>
+
+  <!-- Modularni JS -->
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
